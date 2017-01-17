@@ -1,15 +1,16 @@
 ---
-title: API Reference
+title: Kentico Deliver REST API Docs
 
 language_tabs:
-  - shell
-  - ruby
-  - python
-  - javascript
+  - shell: cURL
+  - ruby: Ruby
+  - python: Python
+  - javascript: Javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='https://app.kenticocloud.com'>Sign Up for an API  Key</a>
+  - Link to Kentico Cloud website
+  - Link to other resources
 
 includes:
   - errors
@@ -65,7 +66,7 @@ Kittn expects for the API key to be included in all API requests to the server i
 You must replace <code>meowmeowmeow</code> with your personal API key.
 </aside>
 
-# Kittens
+# Albums
 
 ## Get All Kittens
 
