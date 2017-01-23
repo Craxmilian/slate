@@ -102,7 +102,7 @@
       <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
               <a href="#" data-language-name="shell">cURL</a>
-              <a href="#" data-language-name="javascript">JS</a>
+              <a href="#" data-language-name="javascript">JavaScript</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -120,15 +120,80 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id="introduction">Introduction</h1>
-<pre class="highlight shell"><code>curl <span class="s2">"https://getmedata.com/coolstuff"</span>
-    -H <span class="s2">"HEADER"</span>
-    -H <span class="s2">"HEADERS"</span>
-</code></pre>
-<p>Say hello to the Kentico Cloud API Reference.</p>
+
+<p>Welcome to Kentico Deliver API documentation for developers! Learn how you can use the API to deliver content to your web applications and mobile applications.</p>
+
+<p>The Kentico Deliver API is a RESTfull API. It returns content from Kentico Cloud in the JSON format. We try to keep our API clean and straightforward using standard best practices.</p>
+
+<p><strong>What is Kentico Deliver?</strong></p>
+
+<p>Kentico Deliver is an API-first CMS, which enables you to develop websites or mobile applications in your favorite language and technology. It removes the hassle around a traditional CMS and its technology limitations.</p>
+
+<p>While copywriters can produce content in a cloud application, Kentico Draft, developers can use Kentico Deliver API to develop the website or mobile application with real content, or preview unpublished content to see how it fits your code.</p>
+
+          <h1 id="errors">Errors</h1>
+
+<p>Every response follows the same rules. In the following list you can see the response statuses in different situations and what the responses look like.</p>
+
+<p>The Kentico Cloud APIs use the following error codes:</p>
+
+<ul>
+<li>  <code>400</code> <strong>Bad Request</strong> - The request could not be understood or was missing required parameters</li>
+<li>  <code>401</code> <strong>Unauthorized</strong> - The request was not authorized. Most likely due to invalid API Key provided in the <em>Authorization</em> header.</li>
+<li>  <code>403</code> <strong>Forbidden</strong> - Access denied</li>
+<li>  <code>404</code> <strong>Not Found</strong> - The requested resource does not exist.</li>
+<li>  <code>405</code> <strong>Method Not Allowed</strong> - Requested method is not supported for the specified resource</li>
+<li><p><code>429</code> <strong>Too Many Requests</strong> - Request is rejected due to rate limiting as defined in 
+<a href="https://tools.ietf.org/html/rfc6585#section-4">rfc6585</a>. Value of <code>Retry-After</code> header (seconds) must be respected.  </p>
+
+<p>Additionaly each response under rate limitation includes the following headers:</p>
+
+<ul>
+<li><code class="prettyprint">X-Rate-Limit-Limit</code> rate limit period definion (example: <code class="prettyprint">1d</code>, <code class="prettyprint">15m</code>)</li>
+<li><code class="prettyprint">X-Rate-Limit-Remaining</code> the number of remaining requests in the current period</li>
+<li><code class="prettyprint">X-Rate-Limit-Reset</code> current period end time (example: <code class="prettyprint">8/6/2016 7:54:40 AM</code>)</li>
+</ul></li>
+</ul>
+
+          <h1 id="content-delivery-api">Content delivery API</h1>
+
+<p>You can deliver published content from your project using the production URI: <code class="prettyprint">https://deliver.kenticocloud.com/&lt;project_id&gt;</code></p>
+
+<p>You can preview unpublished content from your project using the preview URI: <code class="prettyprint">https://preview-deliver.kenticocloud.com/&lt;project_id&gt;</code></p>
+
+<p>To test-drive the API, you can perform requests in your favorite browser or other tool, such as postman.</p>
+
+<p>Note that you must replace <code class="prettyprint">&lt;project_id&gt;</code> with an existing Deliver project ID.</p>
+
+<p><strong>What you need to include in every project</strong></p>
+
+<p>Every API request you make must contain the ID of your Kentico Deliver project.</p>
+
+<p>You can get the <strong>project ID</strong> in the administration interface of your project - see Getting project ID.</p>
+
+<h2 id="response-structure">Response structure</h2>
 
 <blockquote>
-<p>Hello work!</p>
+<p>Example response structure
+<code class="prettyprint">json
+{
+    &quot;system&quot;: {
+        &quot;id&quot;: &quot;cf106f4e-30a4-42ef-b313-b8ea3fd3e5c5&quot;,
+        &quot;name&quot;: &quot;Coffee Beverages Explained&quot;,
+        &quot;codename&quot;: &quot;coffee_beverages_explained&quot;,
+        &quot;type&quot;: &quot;article&quot;,
+        &quot;sitemap_locations&quot;: [
+            &quot;articles&quot;
+        ],
+        &quot;last_modified&quot;: &quot;2016-09-08T09:33:45.567364Z&quot;
+    }
+}
+</code></p>
 </blockquote>
+
+<p>Every content item in an API response contains a <code class="prettyprint">system</code> object. This attribute cannot be omitted using any query. However, you might want to use the information this object provides in your application.</p>
+
+<p>The following table describes the attributes that are present in the <code class="prettyprint">system</code> object:</p>
 
 <table><thead>
 <tr>
@@ -155,7 +220,7 @@
 <tr>
 <td>type</td>
 <td>string</td>
-<td>Codename of a content type</td>
+<td>Codename of the content type</td>
 </tr>
 <tr>
 <td>sitemap_locations</td>
@@ -169,88 +234,26 @@
 </tr>
 </tbody></table>
 
-<p>More text under code examples?</p>
+<h2 id="filter-retrieved-items">Filter retrieved items</h2>
 
-          <h1 id="errors">Errors</h1>
+<p>You can filter large sets of content items by building query parameters from content elements and system attributes.</p>
 
-<p>Every response follows the same rules. In the following list you can see the response statuses in different situations and what the responses look like.</p>
+<ul>
+<li>To filter by a system attribute, include the <code class="prettyprint">system.&lt;attribute_name&gt;</code> query parameter.</li>
+<li>To filter by a content element value, include the <code class="prettyprint">elements.&lt;content_element_name&gt;</code> query parameter.</li>
+</ul>
 
-<p>The Kentico Cloud APIs use the following error codes:</p>
+<h2 id="get-all-content-items">Get all content items</h2>
 
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
-</tr>
-</tbody></table>
+<p>You can get all content items in a project using the <code class="prettyprint">/&lt;project_id&gt;/items</code> endpoint.</p>
 
-<p><strong>Typical Server Responses</strong>
-*   <code>200</code> <strong>OK</strong> - You can read what are The request was successful
-*   <code>400</code> <strong>Bad Request</strong> - The request could not be understood or was missing required parameters
-*   <code>401</code> <strong>Unauthorized</strong> - The request was not authorized. Most likely due to invalid API Key provided in the <em>Authorization</em> header.
-*   <code>403</code> <strong>Forbidden</strong> - Access denied
-*   <code>404</code> <strong>Not Found</strong> - The requested resource does not exist.
-*   <code>405</code> <strong>Method Not Allowed</strong> - Requested method is not supported for the specified resource
-*   <code>429</code> <strong>Too Many Requests</strong> - Request is rejected due to rate limiting as defined in 
-    <a href="https://tools.ietf.org/html/rfc6585#section-4">rfc6585</a>. Value of <code>Retry-After</code> header (seconds) must be respected.  </p>
-
-<p>Additionaly each response under rate limitation includes the following headers:
-    * <code class="prettyprint">X-Rate-Limit-Limit</code> rate limit period definion (example: <code class="prettyprint">1d</code>, <code class="prettyprint">15m</code>)
-    * <code class="prettyprint">X-Rate-Limit-Remaining</code> the number of remaining requests in the current period
-    * <code class="prettyprint">X-Rate-Limit-Reset</code> current period end time (example: <code class="prettyprint">8/6/2016 7:54:40 AM</code>)</p>
-
-          <h1 id="delivery-api">Delivery API</h1>
+<h2 id="get-a-single-content-item">Get a single content item</h2>
 
       </div>
       <div class="dark-box">
           <div class="lang-selector">
                 <a href="#" data-language-name="shell">cURL</a>
-                <a href="#" data-language-name="javascript">JS</a>
+                <a href="#" data-language-name="javascript">JavaScript</a>
           </div>
       </div>
     </div>
